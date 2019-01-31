@@ -1,10 +1,10 @@
 #include <SPI.h>
 #include "src/Nrf/Nrf.h"
 
-RF24 rfradio(7, 8);
+RF24 rfradio(0, 2);
 Nrf nrf(&rfradio);
 
-const byte address[6] = "00006";
+const byte address[][6] = {"00006", "00008"};
 
 void setup()
 {
@@ -14,15 +14,23 @@ void setup()
     nrf.radio->enableDynamicPayloads();
 
     // Do not use 0 as reading pipe! This pipe is already in use ase writing pipe
-//    nrf.radio->openWritingPipe(address);
-    nrf.radio->openReadingPipe(1, address);
+    nrf.radio->openWritingPipe(address[0]);
+    nrf.radio->openReadingPipe(1, address[1]);
     nrf.radio->startListening();
 }
 
 void loop()
 {
-    receive();
-//    send();
+    send();
+    bool received = nrf.waitForResponse();
+    if(received){
+      char messsage[32] = "";
+      nrf.readMessage(messsage);
+      if (strlen(messsage) != 0)
+      {
+        Serial.println(messsage);
+      }
+    }
 }
 
 void send()

@@ -14,6 +14,7 @@ void setup()
     nrf.radio->enableDynamicPayloads();
 
     // Do not use 0 as reading pipe! This pipe is already in use ase writing pipe
+    nrf.radio->openWritingPipe(address[1]);
     nrf.radio->openReadingPipe(1, address[0]);
     nrf.radio->startListening();
 }
@@ -35,6 +36,14 @@ void receive()
         Serial.println(dir);
         int distance = getDistance(message);
         Serial.println(distance);
+
+        char sendMsg[32] = "Done";
+        bool ok = nrf.sendMessage(sendMsg, sizeof(sendMsg));
+        if (ok){
+          Serial.println("Arduino - Message Received");
+        }else{
+          Serial.println("Arduino - Message Received failed");
+        }
     }
 }
 
