@@ -10,15 +10,13 @@ void Nrf::readMessage(char *message)
 {
     if (radio->available())
     {
-        char message[32] = "";
-        
         while (radio->available())
         {
             uint8_t len = radio->getDynamicPayloadSize();
             radio->read(message, len);
         }
 
-        Serial.println(message);
+        return message;
     }
 }
 

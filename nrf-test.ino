@@ -14,14 +14,14 @@ void setup()
     nrf.radio->enableDynamicPayloads();
 
     // Do not use 0 as reading pipe! This pipe is already in use ase writing pipe
-    nrf.radio->openWritingPipe(address);
-    // nrf.radio->openReadingPipe(1, address);
-    // nrf.radio->startListening();
+    // nrf.radio->openWritingPipe(address);
+    nrf.radio->openReadingPipe(1, address);
+    nrf.radio->startListening();
 }
 
 void loop()
 {
-    send();
+    receive();
 }
 
 void send()
