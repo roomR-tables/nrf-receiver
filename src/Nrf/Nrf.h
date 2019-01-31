@@ -1,3 +1,5 @@
+#ifndef Nrf_h
+#define Nrf_h
 
 #include "Arduino.h"
 #include <nRF24L01.h>
@@ -6,10 +8,12 @@
 class Nrf
 {
   public:
+    Nrf(RF24 *rfradio);
     RF24 *radio;
-    Nrf(int ce, int csn);
 
     void readMessage(char *message);
-    bool sendMessage(char *message);
+    bool sendMessage(char *message, uint8_t len);
     bool waitForResponse();
 };
+
+#endif

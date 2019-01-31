@@ -1,28 +1,32 @@
+#include "Arduino.h"
 #include "Nrf.h"
 
-Nrf::Nrf(int ce, int csn)
+Nrf::Nrf(RF24 *rfradio)
 {
-    RF24 radio(ce, csn);
-    this->radio = &radio;
+    radio = rfradio;
 }
 
 void Nrf::readMessage(char *message)
 {
-    if (this->radio->available())
+    if (radio->available())
     {
-        while (this->radio->available())
+        char message[32] = "";
+        
+        while (radio->available())
         {
-            uint8_t len = this->radio->getDynamicPayloadSize();
-            this->radio->read(message, len);
+            uint8_t len = radio->getDynamicPayloadSize();
+            radio->read(message, len);
         }
+
+        Serial.println(message);
     }
 }
 
-bool Nrf::sendMessage(char *message)
+bool Nrf::sendMessage(char *message, uint8_t len)
 {
-    this->radio->stopListening();
-    bool ok = this->radio->write(message, sizeof(message));
-    this->radio->startListening();
+    radio->stopListening();
+    bool ok = radio->write(message, len);
+    radio->startListening();
 
     return ok;
 }
@@ -32,7 +36,7 @@ bool Nrf::waitForResponse()
     unsigned long started_waiting_at = millis();
     bool timeout = false;
 
-    while (!this->radio->available() && !timeout)
+    while (!radio->available() && !timeout)
     {
         if (millis() - started_waiting_at > 200)
         {

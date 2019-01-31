@@ -1,9 +1,10 @@
 #include <SPI.h>
 #include "src/Nrf/Nrf.h"
 
-Nrf nrf(0, 2);
+RF24 rfradio(7, 8);
+Nrf nrf(&rfradio);
 
-const byte pipe[][13] = {"arduino_read", "pi_read"};
+const byte address[6] = "00001";
 
 void setup()
 {
@@ -13,58 +14,40 @@ void setup()
     nrf.radio->enableDynamicPayloads();
 
     // Do not use 0 as reading pipe! This pipe is already in use ase writing pipe
-    nrf.radio->openWritingPipe(pipe[1]);
-    nrf.radio->openReadingPipe(1, pipe[0]);
-    nrf.radio->startListening();
+    nrf.radio->openWritingPipe(address);
+    // nrf.radio->openReadingPipe(1, address);
+    // nrf.radio->startListening();
 }
 
 void loop()
 {
-    ping();
+    send();
 }
 
-void ping()
+void send()
 {
-    Serial.print(millis());
-    Serial.print(": ");
-
-    // send a message
-    char message[32] = "ping";
-    bool ok = nrf.sendMessage(message);
+    char message[32] = "Hello World!";
+    bool ok = nrf.sendMessage(message, sizeof(message));
 
     if (ok)
     {
-        bool success = nrf.waitForResponse();
-
-        if (!success)
-        {
-            Serial.println("No response");
-        }
-        else
-        {
-            char response[32] = "";
-            nrf.readMessage(response);
-
-            Serial.print("Got response; response=");
-            Serial.print(response);
-
-            if (strcmp(response, message) != 0)
-            {
-
-                Serial.print("; equal=False");
-            }
-            else
-            {
-                Serial.print("; equal=True");
-            }
-
-            Serial.println();
-        }
+        Serial.println("Message received!");
     }
     else
     {
-        Serial.println("Ping not received");
+        Serial.println("Message not received :-(");
     }
 
-    delay(500);
+    delay(1000);
+}
+
+void receive()
+{
+    char message[32] = "";
+    nrf.readMessage(message);
+
+    if (strlen(message) != 0)
+    {
+        Serial.println(message);
+    }
 }
