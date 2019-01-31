@@ -15,8 +15,6 @@ void Nrf::readMessage(char *message)
             uint8_t len = radio->getDynamicPayloadSize();
             radio->read(message, len);
         }
-
-        return message;
     }
 }
 
