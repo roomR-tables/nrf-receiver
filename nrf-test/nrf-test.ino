@@ -4,6 +4,7 @@
 RF24 rfradio(0, 2);
 Nrf nrf(&rfradio);
 
+#define CHARARRAYLENGTH 32
 const byte address[][6] = {"00006", "00008"};
 
 void setup()
@@ -21,7 +22,13 @@ void setup()
 
 void loop()
 {
-    send();
+  if (Serial.available() > 0) {
+    String in = Serial.readStringUntil('\n');
+    Serial.println("> " + in);
+    char stringToChar[CHARARRAYLENGTH] = "";
+    in.toCharArray(stringToChar, CHARARRAYLENGTH);
+    Serial.println(stringToChar);
+    send(stringToChar, (sizeof(stringToChar)/sizeof(char)));
     bool received = nrf.waitForResponse();
     if(received){
       char messsage[32] = "";
@@ -31,12 +38,13 @@ void loop()
         Serial.println(messsage);
       }
     }
+  }
 }
 
-void send()
+void send(char message[], int len)
 {
-    char message[32] = "f1000";
-    bool ok = nrf.sendMessage(message, sizeof(message));
+//    char message[32] = "f1000";
+    bool ok = nrf.sendMessage(message, len);
 
     if (ok)
     {
