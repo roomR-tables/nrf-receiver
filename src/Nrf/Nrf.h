@@ -11,7 +11,7 @@ class Nrf
     Nrf(RF24 *rfradio);
     RF24 *radio;
 
-    void readMessage(char *message);
+    void readMessage(char *message, uint8_t len);
     bool sendMessage(char *message, uint8_t len);
     bool waitForResponse();
 };

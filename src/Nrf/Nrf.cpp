@@ -6,13 +6,12 @@ Nrf::Nrf(RF24 *rfradio)
     radio = rfradio;
 }
 
-void Nrf::readMessage(char *message)
+void Nrf::readMessage(char *message, uint8_t len)
 {
     if (radio->available())
     {
         while (radio->available())
         {
-            uint8_t len = radio->getDynamicPayloadSize();
             radio->read(message, len);
         }
     }

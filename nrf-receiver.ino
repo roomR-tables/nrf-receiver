@@ -27,8 +27,7 @@ void loop()
 void receive()
 {
     char message[32] = "";
-    nrf.readMessage(message);
-
+    nrf.readMessage(message, nrf.radio->getDynamicPayloadSize());
     if (strlen(message) != 0)
     {
         Serial.println(message);
@@ -51,14 +50,16 @@ char getDirection(char input[]){
   return input[0];
 }
 
-int getDistance(char input[]){
+long getDistance(char input[]){
   String output = "";
   for(int i = 1; i < 32; i++){
     if(isdigit(input[i])){
+      Serial.println(" Digit: " + input[i]);
       output += input[i];
     }else{
       break;
     }
   }
+  Serial.println(output);
   return output.toInt();
 }
