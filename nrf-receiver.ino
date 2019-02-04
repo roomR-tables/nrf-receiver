@@ -4,7 +4,8 @@
 RF24 rfradio(7, 8);
 Nrf nrf(&rfradio);
 
-const byte address[][6] = {"00006", "00008"};
+const byte address[][12] = {"arduino_read", "pi_read"};
+//const byte address[][6] = {"00006", "00008"};
 
 void setup()
 {
@@ -54,12 +55,12 @@ long getDistance(char input[]){
   String output = "";
   for(int i = 1; i < 32; i++){
     if(isdigit(input[i])){
-      Serial.println(" Digit: " + input[i]);
+//      Serial.println(" Digit: " + input[i]);
       output += input[i];
     }else{
       break;
     }
   }
-  Serial.println(output);
+//  Serial.println(output);
   return output.toInt();
 }
